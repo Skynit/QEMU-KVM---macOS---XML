@@ -1,0 +1,160 @@
+<domain xmlns:qemu="http://libvirt.org/schemas/domain/qemu/1.0" type="kvm">
+  <name>macOS</name>
+  <uuid>727ba88d-e753-437a-9006-9b586dcdbb4c</uuid>
+  <memory unit="KiB">8388608</memory>
+  <currentMemory unit="KiB">8388608</currentMemory>
+  <vcpu placement="static">8</vcpu>
+  <iothreads>1</iothreads>
+  <cputune>
+    <vcpupin vcpu="0" cpuset="4"/>
+    <vcpupin vcpu="1" cpuset="5"/>
+    <vcpupin vcpu="2" cpuset="6"/>
+    <vcpupin vcpu="3" cpuset="7"/>
+    <vcpupin vcpu="4" cpuset="12"/>
+    <vcpupin vcpu="5" cpuset="13"/>
+    <vcpupin vcpu="6" cpuset="14"/>
+    <vcpupin vcpu="7" cpuset="15"/>
+    <emulatorpin cpuset="0,8"/>
+    <iothreadpin iothread="1" cpuset="0,8"/>
+  </cputune>
+  <os>
+    <type arch="x86_64" machine="pc-q35-7.1">hvm</type>
+    <loader readonly="yes" type="pflash">/usr/share/edk2-ovmf/x64/OVMF_CODE.fd</loader>
+    <nvram>/var/lib/libvirt/qemu/nvram/macOS_VARS.fd</nvram>
+    <boot dev="hd"/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <vmport state="off"/>
+  </features>
+  <cpu mode="host-passthrough" check="none" migratable="on">
+    <topology sockets="1" dies="1" cores="4" threads="2"/>
+    <feature policy="require" name="topoext"/>
+  </cpu>
+  <clock offset="utc">
+    <timer name="rtc" tickpolicy="catchup"/>
+    <timer name="pit" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled="no"/>
+    <suspend-to-disk enabled="no"/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="qcow2"/>
+      <source file="/home/skynox/IT/VMs/macOS/QEMU/EFI.qcow2"/>
+      <target dev="sda" bus="sata"/>
+      <address type="drive" controller="0" bus="0" target="0" unit="0"/>
+    </disk>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="qcow2"/>
+      <source file="/home/skynox/IT/VMs/macOS/QEMU/macOS.qcow2"/>
+      <target dev="sdb" bus="sata"/>
+      <address type="drive" controller="0" bus="0" target="0" unit="1"/>
+    </disk>
+    <controller type="sata" index="0">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1f" function="0x2"/>
+    </controller>
+    <controller type="pci" index="0" model="pcie-root"/>
+    <controller type="pci" index="1" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="1" port="0x10"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0" multifunction="on"/>
+    </controller>
+    <controller type="pci" index="2" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="2" port="0x11"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x1"/>
+    </controller>
+    <controller type="pci" index="3" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="3" port="0x12"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x2"/>
+    </controller>
+    <controller type="pci" index="4" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="4" port="0x13"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x3"/>
+    </controller>
+    <controller type="pci" index="5" model="pcie-root-port">
+      <model name="pcie-root-port"/>
+      <target chassis="5" port="0x14"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x4"/>
+    </controller>
+    <controller type="usb" index="0" model="ich9-ehci1">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1d" function="0x7"/>
+    </controller>
+    <controller type="usb" index="0" model="ich9-uhci1">
+      <master startport="0"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1d" function="0x0" multifunction="on"/>
+    </controller>
+    <controller type="usb" index="0" model="ich9-uhci2">
+      <master startport="2"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1d" function="0x1"/>
+    </controller>
+    <controller type="usb" index="0" model="ich9-uhci3">
+      <master startport="4"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1d" function="0x2"/>
+    </controller>
+    <interface type="bridge">
+      <mac address="52:54:00:e0:83:63"/>
+      <source bridge="virbr0"/>
+      <model type="e1000-82545em"/>
+      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+    </interface>
+    <input type="evdev">
+      <source dev="/dev/input/by-id/usb-Logitech_G502_HERO_Gaming_Mouse_107B395E3931-event-mouse"/>
+    </input>
+    <input type="evdev">
+      <source dev="/dev/input/by-id/usb-Logitech_G502_HERO_Gaming_Mouse_107B395E3931-if01-event-kbd"/>
+    </input>
+    <input type="evdev">
+      <source dev="/dev/input/by-id/usb-Logitech_G513_RGB_MECHANICAL_GAMING_KEYBOARD_1070394D3132-event-kbd" grab="all" repeat="on"/>
+    </input>
+    <input type="evdev">
+      <source dev="/dev/input/by-id/usb-Logitech_G513_RGB_MECHANICAL_GAMING_KEYBOARD_1070394D3132-if01-event-kbd" grab="all" repeat="on"/>
+    </input>
+    <input type="mouse" bus="ps2"/>
+    <input type="keyboard" bus="ps2"/>
+    <input type="mouse" bus="usb">
+      <address type="usb" bus="0" port="1"/>
+    </input>
+    <input type="keyboard" bus="usb">
+      <address type="usb" bus="0" port="2"/>
+    </input>
+    <sound model="ich9">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x1b" function="0x0"/>
+    </sound>
+    <audio id="1" type="none"/>
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0x0000" bus="0x09" slot="0x00" function="0x0"/>
+      </source>
+      <rom file="/home/skynox/IT/ISOs/Navi_10.rom"/>
+      <address type="pci" domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
+    </hostdev>
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0x0000" bus="0x09" slot="0x00" function="0x1"/>
+      </source>
+      <address type="pci" domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
+    </hostdev>
+    <memballoon model="none"/>
+  </devices>
+  <qemu:commandline>
+    <qemu:arg value="-cpu"/>
+    <qemu:arg value="host,vendor=AuthenticAMD,+hypervisor,+invtsc,kvm=on,+fpu,+vme,+de,+pse,+tsc,+msr,+pae,+mce,+cx8,+apic,+sep,+mtrr,+pge,+mca,+cmov,+pat,+pse36,+clflush,+mmx,+fxsr,+sse,+sse2,+ht,+syscall,+nx,+mmxext,+fxsr_opt,+pdpe1gb,+rdtscp,+lm,+pni,+pclmulqdq,+monitor,+ssse3,+fma,+cx16,+sse4_1,+sse4_2,+x2apic,+movbe,+popcnt,+aes,+xsave,+avx,+f16c,+rdrand,+lahf_lm,+cmp_legacy,+svm,+extapic,+abm,+sse4a,+misalignsse,+3dnowprefetch,+osvw,+ibs,+skinit,+wdt,+tce,+topoext,+perfctr_core,+perfctr_nb,+ssbd,+ibpb,+stibp,+fsgsbase,+bmi1,+avx2,+smep,+bmi2,+rdseed,+adx,+smap,+clflushopt,+clwb,+xsaveopt,+xsavec,+xgetbv1,+xsaves,+clzero,+xsaveerptr,+wbnoinvd,+arat,+npt,+lbrv,+svm_lock,+nrip_save,+tsc_scale,+vmcb_clean,+flushbyasid,+decodeassists,+pfthreshold,+avic,+vgif,+umip,+rdpid"/>
+    <qemu:arg value="-device"/>
+    <qemu:arg value="isa-applesmc,osk=ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc"/>
+    <qemu:arg value="-smbios"/>
+    <qemu:arg value="type=2"/>
+    <qemu:arg value="-global"/>
+    <qemu:arg value="ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off"/>
+  </qemu:commandline>
+</domain>
